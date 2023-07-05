@@ -32,28 +32,30 @@ export default class NotesView {
 				this.onNoteEdit(updatedTitle, updatedBody);
 			});
 		});
+		this.updateNotePreviewVisibility(false);
 	}
+
 
 	_createListItemHTML(id, title, body, updated) {
 		const MAX_BODY_LENGTH = 60;
 
 		return `
 			<div class="notes__list-item" data-note-id="${id}">
-				<div class="notes__small-title">"${title}"</div>
+				<div class="notes__small-title">${title}</div>
 				<div class="notes__small-body">
 					${body.substring(0, MAX_BODY_LENGTH)}
 					${body.length > MAX_BODY_LENGTH ? "..." : ""}
 				</div>
 				<div class="notes__small-updated">
-					${updated.toLocaleString(undefined, {dateStyle: "full", timeStyle: "short"})}
+					${updated.toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" })}
 				</div>
 			</div>
 		`;
 	}
 
+
 	udpateNoteList(notes) {
 		const notesListContainer = this.root.querySelector(".notes__list");
-
 		notesListContainer.innerHTML = "";
 
 		for (const note of notes) {
@@ -61,10 +63,19 @@ export default class NotesView {
 			notesListContainer.insertAdjacentHTML("beforeend", html);
 		}
 
-		notesListContainer.querySelectorAll(".notes__List-item").forEach(notesListItem => {
+		notesListContainer.querySelectorAll(".notes__list-item").forEach(notesListItem => {
 			notesListItem.addEventListener("click", () => {
-				this.onNoteSelect(noteListItem.dataset.noteId);
+				this.onNoteSelect(notesListItem.dataset.noteId);
+			});
+
+			notesListItem.addEventListener("dblclick", () => {
+				const doDelete = confirm("Are you sure you want to delete this note?");
+
+				if (doDelete) {
+					this.onNoteDelete(notesListItem.dataset.noteId);
+				}
 			});
 		});
 	}
+
 }
